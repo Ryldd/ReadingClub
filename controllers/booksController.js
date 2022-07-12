@@ -15,7 +15,6 @@ async function addBook(isbn) {
     await books.volumes.list({q : "isbn=" + isbn})
         .then(
             async function (response) {
-                console.log(response)
                 if(!response.data.items)
                     throw new Error("L'id du livre rentré n'existe pas dans la base de données google")
                 const volume = response.data.items[0].volumeInfo;
@@ -46,6 +45,10 @@ async function pickBookOTM() {
     return bookOTM;
 }
 
+async function closeBookOTM() {
+    await bookModel.closeBookOTM();
+}
+
 async function getBookOTM() {
     return await bookModel.getCurrent();
 }
@@ -54,4 +57,8 @@ async function getAllBooks() {
     return await bookModel.getAllBooks();
 }
 
-module.exports = {addBook, pickBookOTM, getBookOTM, getAllBooks}
+async function getBookDetails(isbn) {
+    return await bookModel.getBook(isbn);
+}
+
+module.exports = {addBook, pickBookOTM, getBookOTM, getAllBooks, getBookDetails, closeBookOTM}
