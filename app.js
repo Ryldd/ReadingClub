@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-// const cron = require("node-cron");
+const cron = require("node-cron");
 const client = new Discord.Client({
     intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES, Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Discord.Intents.FLAGS.GUILD_MEMBERS],
     partials: ['MESSAGE', 'CHANNEL', 'REACTION', 'MEMBERS']
@@ -36,16 +36,40 @@ client.on("messageCreate", function (message) {
 
 client.login(process.env.BOT_LOGIN);
 
-function addBook(book, message) {
+// Tirage du livre mensuel
+cron.schedule('0 18 1 * *', async function (){
+    await showBookOTM(await readingClub.pickBookOTM(), true);
+})
+
+async function showBookOTM(book, first) {
+    console.log(book)
+    const pages = book.pages ? book.pages : "X";
+    const embedBook = new Discord.MessageEmbed()
+        .setColor('#852994')
+        .setTitle("Livre du mois : " + book.title)
+        .setImage(book.image)
+        .setDescription(""+book.link)
+        .setFooter({text: pages + " pages - " + book.categories});
+
+    const readingChannel = await client.channels.cache.get(channelID).fetch(true);
+
+    if(first)
+        readingChannel.send("everyone");
+    readingChannel.send({embeds: [embedBook]});
+}
+
+async function addBook(book) {
     const pages = book.pages ? book.pages : "X";
     const embedBook = new Discord.MessageEmbed()
         .setColor('#4aa827')
         .setTitle("Ajout : " + book.title)
         .setImage(book.image)
-        .setDescription(""+book.link)
-        .setFooter({text: book.pages + " pages - " + book.categories});
+        .setDescription("" + book.link)
+        .setFooter({text: pages + " pages - " + book.categories});
 
-    message.channel.send({content: message.author.toString(), embeds: [embedBook]});
+    const readingChannel = await client.channels.cache.get(channelID).fetch(true);
+
+    readingChannel.send({embeds: [embedBook]});
 }
 
 async function processRequest(message) {
@@ -55,9 +79,44 @@ async function processRequest(message) {
         case "add":
             try {
                 const isbn = words.length > 1 ? words[1] : null;
-                addBook(await readingClub.add(message.author, isbn), message)
+                await addBook(await readingClub.add(message.author, isbn))
             } catch (error) {
                 console.error(error)
             }
+            break;
+        case "review":
+        case "current":
+            console.log("current")
+            await showBookOTM(await readingClub.getBookOTM(), false);
+
     }
 }
+
+
+// Express
+const express = require('express')
+const cors = require('cors')
+const app = express();
+
+app.use(cors())
+
+app.get('/books/add/:id', async (req, res) => {
+    const isbn = parseInt(req.params.id);
+    const book = await readingClub.add("message.autho", isbn)
+    await addBook(book);
+    res.status(200).json(book);
+})
+
+app.get('/books/all', async (req, res)=>{
+    const books = await readingClub.getAllBooks();
+    res.status(200).json(books)
+})
+
+app.get('/books/current', async (req, res)=>{
+    const current = await readingClub.getBookOTM();
+    res.status(200).json(current)
+})
+
+app.listen(8080, () => {
+    console.log('Server on')
+})

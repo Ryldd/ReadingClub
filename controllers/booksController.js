@@ -15,12 +15,16 @@ async function addBook(isbn) {
     await books.volumes.list({q : "isbn=" + isbn})
         .then(
             async function (response) {
+                console.log(response)
+                if(!response.data.items)
+                    throw new Error("L'id du livre rentré n'existe pas dans la base de données google")
                 const volume = response.data.items[0].volumeInfo;
                 let book = {};
                 book.id = isbn;
                 book.title = volume.title;
-                book.author = volume.authors[0];
-                book.categories = volume.categories[0];
+                book.description = volume.description.slice(0, 200)+"...";
+                book.author = volume.authors[0] ? volume.authors[0] : "";
+                book.categories = volume.categories[0] ? volume.categories[0] : "";
                 book.pages = volume.pageCount;
                 book.image = volume.imageLinks.thumbnail;
                 book.link = volume.infoLink;
@@ -28,9 +32,26 @@ async function addBook(isbn) {
             },
             function (err) {
                 throw new Error("Une erreur s'est produite lors de la création du livre :" + err)
-            });
+            }
+        );
 
     return await bookModel.getBook(isbn);
 }
 
-module.exports = {addBook}
+async function pickBookOTM() {
+    const books = await bookModel.getAllBooks();
+    const rand = Math.floor(Math.random() * books.length);
+    const bookOTM = books[rand]
+    await bookModel.setCurrent(bookOTM._id)
+    return bookOTM;
+}
+
+async function getBookOTM() {
+    return await bookModel.getCurrent();
+}
+
+async function getAllBooks() {
+    return await bookModel.getAllBooks();
+}
+
+module.exports = {addBook, pickBookOTM, getBookOTM, getAllBooks}
