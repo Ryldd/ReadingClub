@@ -43,7 +43,7 @@ client.login(process.env.BOT_LOGIN);
 //     await showMovieOTM(await readingClub.pickMovieOTM(), true);
 // })
 
-cron.schedule('15 * * * *', async function () {
+cron.schedule('15 * * * * *', async function () {
      console.log("test cron")
  })
 
