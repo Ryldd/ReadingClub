@@ -34,6 +34,8 @@ async function getMovieDetails(id) {
 
 async function pickMovieOTM() {
     const movies = await movieModel.getAllMovies();
+    if(movies.length === 0)
+        throw new Error("La base de données est vide, impossible de choisir le livre du mois")
     const rand = Math.floor(Math.random() * movies.length);
     const movieOTM = movies[rand]
     await movieModel.setCurrent(movieOTM._id)

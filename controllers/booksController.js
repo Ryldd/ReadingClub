@@ -9,7 +9,7 @@ async function addBook(isbn) {
 
     const bookData = await bookModel.getBook(isbn);
     if(bookData){
-        throw new Error("Livre déjà enregistré <:pascontent:851365340885024769>");
+        throw new Error("Livre déjà enregistré");
     }
 
     await books.volumes.list({q : "isbn=" + isbn})
@@ -17,6 +17,7 @@ async function addBook(isbn) {
             async function (response) {
                 if(!response.data.items)
                     throw new Error("L'id du livre rentré n'existe pas dans la base de données google")
+
                 const volume = response.data.items[0].volumeInfo;
                 let book = {};
                 book.id = isbn;
@@ -30,7 +31,7 @@ async function addBook(isbn) {
                 await bookModel.addBook(book);
             },
             function (err) {
-                throw new Error("Une erreur s'est produite lors de la création du livre :" + err)
+                throw new Error("Une erreur s'est produite lors de la création du livre : " + err)
             }
         );
 
@@ -39,6 +40,8 @@ async function addBook(isbn) {
 
 async function pickBookOTM() {
     const books = await bookModel.getAllBooks();
+    if(books.length === 0)
+        throw new Error("La base de données est vide, impossible de choisir le livre du mois")
     const rand = Math.floor(Math.random() * books.length);
     const bookOTM = books[rand]
     await bookModel.setCurrent(bookOTM._id)

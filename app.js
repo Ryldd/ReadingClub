@@ -11,16 +11,16 @@ const readingClub = require("./controllers/readingClub")
 // MONGOnpm
 const mongoose = require("mongoose");
 const mongoURL = process.env.MONGO_CONNECT;
-const connectionParams={
+const connectionParams = {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }
 
-mongoose.connect(mongoURL,connectionParams)
-    .then( () => {
+mongoose.connect(mongoURL, connectionParams)
+    .then(() => {
         console.log('Connected to database ')
     })
-    .catch( (err) => {
+    .catch((err) => {
         console.error(`Error connecting to the database. \n${err}`);
     });
 
@@ -38,7 +38,7 @@ client.login(process.env.BOT_LOGIN);
 
 
 // Tirage du livre mensuel
-cron.schedule('0 18 1 * *', async function (){
+cron.schedule('0 18 1 * *', async function () {
     await showBookOTM(await readingClub.pickBookOTM(), true);
     await showMovieOTM(await readingClub.pickMovieOTM(), true);
 })
@@ -47,12 +47,12 @@ async function showMovieOTM(movie, first) {
     const embedBook = new Discord.MessageEmbed()
         .setColor('#852994')
         .setTitle("Livre du mois : " + movie.title)
-        .setDescription(""+movie.description)
+        .setDescription("" + movie.description)
         .setFooter({text: movie.runtime + "min"});
 
     const readingChannel = await client.channels.cache.get(channelID).fetch(true);
 
-    if(first)
+    if (first)
         readingChannel.send("everyone");
     readingChannel.send({embeds: [embedBook]});
 }
@@ -63,12 +63,12 @@ async function showBookOTM(book, first) {
         .setColor('#852994')
         .setTitle("Livre du mois : " + book.title)
         .setImage(book.image)
-        .setDescription(""+book.link)
+        .setDescription("" + book.link)
         .setFooter({text: pages + " pages - " + book.categories});
 
     const readingChannel = await client.channels.cache.get(channelID).fetch(true);
 
-    if(first)
+    if (first)
         readingChannel.send("everyone");
     readingChannel.send({embeds: [embedBook]});
 }
@@ -119,61 +119,100 @@ app.use(bodyParser.json());
 
 // BOOKS
 app.get('/books/add/:id', async (req, res) => {
-    const isbn = parseInt(req.params.id);
-    const book = await readingClub.addBook(isbn)
-    await addBook(book);
-    res.status(200).json(book);
+    try {
+        const isbn = parseInt(req.params.id);
+        const book = await readingClub.addBook(isbn)
+        res.status(200).json(book);
+    } catch (error) {
+        res.status(500).send({error: error.message})
+    }
 });
 
-app.get('/books/all', async (req, res)=>{
-    const books = await readingClub.getAllBooks();
-    res.status(200).json(books)
+app.get('/books/all', async (req, res) => {
+    try {
+        const books = await readingClub.getAllBooks();
+        res.status(200).json(books)
+    } catch (error) {
+        res.status(500).send({error: error.message})
+    }
 });
 
-app.get('/books/:id', async (req, res)=>{
-    const isbn = parseInt(req.params.id);
-    const book = await readingClub.getBookDetails(isbn);
-    res.status(200).json(book)
+app.get('/books/:id', async (req, res) => {
+    try {
+        const isbn = parseInt(req.params.id);
+        const book = await readingClub.getBookDetails(isbn);
+        res.status(200).json(book)
+    } catch (error) {
+        res.status(500).send({error: error.message})
+    }
 });
 
-app.get('/books/current', async (req, res)=>{
-    const current = await readingClub.getBookOTM();
-    res.status(200).json(current)
+app.get('/books/current', async (req, res) => {
+    try {
+        const current = await readingClub.getBookOTM();
+        res.status(200).json(current)
+    } catch (error) {
+        res.status(500).send({error: error.message})
+    }
 });
 
 //MOVIES
 app.get('/movies/searchFive/:title', async (req, res) => {
-    const movie = await readingClub.searchFiveMovies(req.params.title)
-    res.status(200).json(movie);
+    try {
+        const movie = await readingClub.searchFiveMovies(req.params.title)
+        res.status(200).json(movie);
+    } catch (error) {
+        res.status(500).send({error: error.message})
+    }
 });
 
 app.get('/movies/add/:id', async (req, res) => {
-    const id = parseInt(req.params.id);
-    const movie = await readingClub.addMovie(id);
-    res.status(200).json(movie);
+    try {
+        const id = parseInt(req.params.id);
+        const movie = await readingClub.addMovie(id);
+        res.status(200).json(movie);
+    } catch (error) {
+        res.status(500).send({error: error.message})
+    }
 });
 
-app.get('/movies/all', async (req, res)=>{
-    const movies = await readingClub.getAllMovies();
-    res.status(200).json(movies)
+app.get('/movies/all', async (req, res) => {
+    try {
+        const movies = await readingClub.getAllMovies();
+        res.status(200).json(movies)
+    } catch (error) {
+        res.status(500).send({error: error.message})
+    }
 });
 
-app.get('/movies/:id', async (req, res)=>{
-    const id = parseInt(req.params.id);
-    const movie = await readingClub.getMovieDetails(id);
-    res.status(200).json(movie)
+app.get('/movies/:id', async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        const movie = await readingClub.getMovieDetails(id);
+        res.status(200).json(movie)
+    } catch (error) {
+        res.status(500).send({error: error.message})
+    }
 });
 
-app.get('/movies/current', async (req, res)=>{
-    const current = await readingClub.getMovieOTM();
-    res.status(200).json(current)
+app.get('/movies/current', async (req, res) => {
+    try {
+        const current = await readingClub.getMovieOTM();
+        res.status(200).json(current)
+    } catch (error) {
+        res.status(500).send({error: error.message})
+    }
 });
 
 
 //REVIEWS
 app.post('/reviews/rate', async (req, res) => {
-    const review = await readingClub.rate(req.body);
-    res.status(200).json(review)
+    try {
+        const review = await readingClub.rate(req.body);
+        res.status(200).json(review)
+    } catch (error) {
+        res.status(500).send({error: error.message})
+    }
 });
 
 app.listen(8080, () => {

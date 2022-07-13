@@ -36,7 +36,10 @@ async function getMovie(movieId) {
 }
 
 async function getMovieOTM() {
-    return Movie.findOne({current: true});
+    const current = Movie.findOne({current: true});
+    if (!current)
+        throw new Error("Le film du mois n'a pas encore été choisi")
+    return current
 }
 
 async function addReview(id, reviewDB) {
