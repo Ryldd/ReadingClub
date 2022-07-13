@@ -6,6 +6,7 @@ const movieModel = new Schema({
     _id: String,
     title: String,
     description: String,
+    poster: String,
     runtime: Number,
     seen: Boolean,
     current: Boolean,
@@ -19,6 +20,7 @@ async function addMovie(movie){
     movieDB._id = movie.id;
     movieDB.title = movie.title;
     movieDB.description = movie.description;
+    movieDB.poster = movie.poster;
     movieDB.runtime = movie.runtime;
     movieDB.seen = false;
     movieDB.current = false;
@@ -36,7 +38,7 @@ async function getMovie(movieId) {
 }
 
 async function getMovieOTM() {
-    const current = Movie.findOne({current: true});
+    const current = Movie.findOne({current: true}).populate("reviews");
     if (!current)
         throw new Error("Le film du mois n'a pas encore été choisi")
     return current

@@ -52,4 +52,8 @@ async function getMovieDetails(id) {
     return await moviesController.getMovieDetails(id);
 }
 
-module.exports = {addBook, pickBookOTM, getBookOTM, getAllBooks, rate, getBookDetails, searchFiveMovies, addMovie, getAllMovies, getMovieOTM, getMovieDetails, pickMovieOTM}
+async function lastFiveReviews() {
+    return await reviewsController.getLastFiveReviews();
+}
+
+module.exports = {addBook, pickBookOTM, getBookOTM, getAllBooks, rate, getBookDetails, searchFiveMovies, addMovie, getAllMovies, getMovieOTM, getMovieDetails, pickMovieOTM, lastFiveReviews}

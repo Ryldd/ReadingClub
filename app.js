@@ -116,7 +116,6 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-
 // BOOKS
 app.get('/books/add/:id', async (req, res) => {
     try {
@@ -137,7 +136,7 @@ app.get('/books/all', async (req, res) => {
     }
 });
 
-app.get('/books/:id', async (req, res) => {
+app.get('/books/get/:id', async (req, res) => {
     try {
         const isbn = parseInt(req.params.id);
         const book = await readingClub.getBookDetails(isbn);
@@ -150,6 +149,8 @@ app.get('/books/:id', async (req, res) => {
 app.get('/books/current', async (req, res) => {
     try {
         const current = await readingClub.getBookOTM();
+        console.log("current");
+        console.log(current);
         res.status(200).json(current)
     } catch (error) {
         res.status(500).send({error: error.message})
@@ -185,7 +186,7 @@ app.get('/movies/all', async (req, res) => {
     }
 });
 
-app.get('/movies/:id', async (req, res) => {
+app.get('/movies/get/:id', async (req, res) => {
     try {
         const id = parseInt(req.params.id);
         const movie = await readingClub.getMovieDetails(id);
@@ -214,6 +215,16 @@ app.post('/reviews/rate', async (req, res) => {
         res.status(500).send({error: error.message})
     }
 });
+
+app.get('/reviews/lastFive', async (req, res) => {
+    try{
+        console.log('last five reviews')
+        const reviews = await readingClub.lastFiveReviews();
+        res.status(200).json(reviews);
+    } catch (error) {
+        res.status(500).send({error: error.message})
+    }
+})
 
 app.listen(8080, () => {
     console.log('Server on')

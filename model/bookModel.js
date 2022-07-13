@@ -45,7 +45,7 @@ async function setCurrent(bookId){
 }
 
 async function getCurrent(){
-    const current = Book.findOne({current: true});
+    const current = Book.findOne({current: true}).populate("reviews");
     if (!current)
         throw new Error("Le livre du mois n'a pas encore été choisi")
     return current;

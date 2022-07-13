@@ -15,7 +15,9 @@ async function addMovie(id) {
     let movie = {
         id: movieData.id,
         description: movieData.overview,
-        runtime: movieData.runtime
+        poster: "https://image.tmdb.org/t/p/w500"+movieData.poster_path,
+        runtime: movieData.runtime,
+        title: movieData.title
     }
     return await movieModel.addMovie(movie);
 }
