@@ -14,7 +14,7 @@ async function addMovie(id) {
     let movieData = response.data;
     let movie = {
         id: movieData.id,
-        description: movieData.overview.slice(0, 200) + "...",
+        description: movieData.overview,
         runtime: movieData.runtime
     }
     return await movieModel.addMovie(movie);

@@ -21,7 +21,7 @@ async function addBook(isbn) {
                 let book = {};
                 book.id = isbn;
                 book.title = volume.title;
-                book.description = volume.description.slice(0, 200)+"...";
+                book.description = volume.description;
                 book.author = volume.authors[0] ? volume.authors[0] : "";
                 book.categories = volume.categories[0] ? volume.categories[0] : "";
                 book.pages = volume.pageCount;
