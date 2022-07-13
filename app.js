@@ -36,16 +36,11 @@ client.on("messageCreate", function (message) {
 
 client.login(process.env.BOT_LOGIN);
 
-
-// Tirage du livre mensuel
-// cron.schedule('0 18 1 * *', async function () {
-//     await showBookOTM(await readingClub.pickBookOTM(), true);
-//     await showMovieOTM(await readingClub.pickMovieOTM(), true);
-// })
-
-cron.schedule('15 * * * * *', async function () {
-     console.log("test cron")
- })
+// Tirage du livre et du film mensuel
+cron.schedule('0 18 1 * *', async function () {
+    await showBookOTM(await readingClub.pickBookOTM(), true);
+    await showMovieOTM(await readingClub.pickMovieOTM(), true);
+})
 
 async function showMovieOTM(movie, first) {
     const embedBook = new Discord.MessageEmbed()
@@ -230,6 +225,6 @@ app.get('/reviews/lastFive', async (req, res) => {
     }
 })
 
-app.listen(8080, () => {
+app.listen(process.env.PORT || 3000, () => {
     console.log('Server on')
 });
