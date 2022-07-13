@@ -38,10 +38,14 @@ client.login(process.env.BOT_LOGIN);
 
 
 // Tirage du livre mensuel
-cron.schedule('0 18 1 * *', async function () {
-    await showBookOTM(await readingClub.pickBookOTM(), true);
-    await showMovieOTM(await readingClub.pickMovieOTM(), true);
-})
+// cron.schedule('0 18 1 * *', async function () {
+//     await showBookOTM(await readingClub.pickBookOTM(), true);
+//     await showMovieOTM(await readingClub.pickMovieOTM(), true);
+// })
+
+cron.schedule('15 * * * *', async function () {
+     console.log("test cron")
+ })
 
 async function showMovieOTM(movie, first) {
     const embedBook = new Discord.MessageEmbed()
