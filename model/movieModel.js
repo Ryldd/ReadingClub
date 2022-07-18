@@ -6,7 +6,7 @@ const movieModel = new Schema({
     _id: String,
     title: String,
     description: String,
-    poster: String,
+    image: String,
     runtime: Number,
     seen: Boolean,
     current: Boolean,
@@ -20,7 +20,7 @@ async function addMovie(movie){
     movieDB._id = movie.id;
     movieDB.title = movie.title;
     movieDB.description = movie.description;
-    movieDB.poster = movie.poster;
+    movieDB.image = movie.poster;
     movieDB.runtime = movie.runtime;
     movieDB.seen = false;
     movieDB.current = false;
