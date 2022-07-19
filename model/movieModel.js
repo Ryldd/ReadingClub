@@ -20,7 +20,7 @@ async function addMovie(movie){
     movieDB._id = movie.id;
     movieDB.title = movie.title;
     movieDB.description = movie.description;
-    movieDB.image = movie.poster;
+    movieDB.image = movie.image;
     movieDB.runtime = movie.runtime;
     movieDB.seen = false;
     movieDB.current = false;
