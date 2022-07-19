@@ -1,5 +1,7 @@
 const bookModel = require("../model/bookModel")
 const {google} = require('googleapis');
+const {response} = require("express");
+const axios = require("axios");
 
 async function addBook(isbn) {
     const books = google.books({
@@ -12,30 +14,25 @@ async function addBook(isbn) {
         throw new Error("Livre déjà enregistré");
     }
 
-    await books.volumes.list({q : "isbn=" + isbn})
-        .then(
-            async function (response) {
-                if(!response.data.items)
-                    throw new Error("L'id du livre rentré n'existe pas dans la base de données google")
+    const response = await axios.get("https://books.googleapis.com/books/v1/volumes?q=isbn=" + isbn + "&key=AIzaSyDDlGX1PO5eOLO86Es2Fs0J_xai88Ep6E0");
 
-                const volume = response.data.items[0].volumeInfo;
-                let book = {};
-                book.id = isbn;
-                book.title = volume.title;
-                book.description = volume.description;
-                book.author = volume.authors[0] ? volume.authors[0] : "";
-                book.categories = volume.categories[0] ? volume.categories[0] : "";
-                book.pages = volume.pageCount;
-                book.image = volume.imageLinks.thumbnail;
-                book.link = volume.infoLink;
-                await bookModel.addBook(book);
-            },
-            function (err) {
-                throw new Error("Une erreur s'est produite lors de la création du livre : " + err)
-            }
-        );
+    if(!response.data.items)
+        throw new Error("L'id du livre rentré n'existe pas dans la base de données google")
+    console.log(response.data.items[0].volumeInfo)
+    const volume = response.data.items[0].volumeInfo;
 
-    return await bookModel.getBook(isbn);
+    let book = {};
+    book.id = isbn;
+    book.title = volume.title;
+    book.description = volume.description;
+    book.author = volume.authors ? volume.authors[0] : "";
+    book.categories = volume.categories ? volume.categories[0] : "";
+    book.pages = volume.pageCount;
+    book.image = volume.imageLinks.thumbnail;
+    book.link = volume.infoLink;
+    await bookModel.addBook(book);
+
+    return book;
 }
 
 async function pickBookOTM() {
