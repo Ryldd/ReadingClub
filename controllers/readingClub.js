@@ -2,8 +2,8 @@ const booksController = require("./booksController");
 const reviewsController = require("./reviewsController");
 const moviesController = require("./moviesController");
 
-async function addBook(isbn) {
-    return await booksController.addBook(isbn);
+async function addBook(googleId) {
+    return await booksController.addBook(googleId);
 }
 
 async function pickBookOTM() {
@@ -36,6 +36,10 @@ async function searchFiveMovies(title) {
     return await moviesController.searchFiveMovies(title);
 }
 
+async function searchFiveBooks(title) {
+    return await booksController.searchFiveBooks(title);
+}
+
 async function addMovie(id) {
     return await moviesController.addMovie(id);
 }
@@ -56,4 +60,4 @@ async function lastFiveReviews() {
     return await reviewsController.getLastFiveReviews();
 }
 
-module.exports = {addBook, pickBookOTM, getBookOTM, getAllBooks, rate, getBookDetails, searchFiveMovies, addMovie, getAllMovies, getMovieOTM, getMovieDetails, pickMovieOTM, lastFiveReviews}
+module.exports = {addBook, pickBookOTM, getBookOTM, getAllBooks, rate, getBookDetails, searchFiveMovies, addMovie, getAllMovies, getMovieOTM, getMovieDetails, pickMovieOTM, lastFiveReviews, searchFiveBooks}

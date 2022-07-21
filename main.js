@@ -27,8 +27,7 @@ app.use(bodyParser.json());
 // BOOKS
 app.get('/books/add/:id', async (req, res) => {
     try {
-        const isbn = parseInt(req.params.id);
-        const book = await readingClub.addBook(isbn)
+        const book = await readingClub.addBook(req.params.id)
         res.status(200).json(book);
     } catch (error) {
         res.status(500).send({error: error.message})
@@ -60,6 +59,15 @@ app.get('/books/current', async (req, res) => {
         console.log("current");
         console.log(current);
         res.status(200).json(current)
+    } catch (error) {
+        res.status(500).send({error: error.message})
+    }
+});
+
+app.get('/books/searchFive/:title', async (req, res) => {
+    try {
+        const book = await readingClub.searchFiveBooks(req.params.title)
+        res.status(200).json(book);
     } catch (error) {
         res.status(500).send({error: error.message})
     }
